@@ -1,0 +1,19 @@
+# NEXUS Paper — protótipo para Termux
+
+Camada independente do motor original TradingAgents. O painel funciona offline usando a biblioteca padrão do Python 3.10+ e SQLite, sem APIs nem corretora. O motor original continua a exigir as próprias dependências e não está integrado ao painel.
+
+## Arranque
+
+No Termux, se Python e Git ainda não estiverem presentes: `pkg install python git`. Depois, num clone deste repositório, executar `bash nexus-start.sh`. O capital inicial por defeito é 1000 USD na primeira execução. O ficheiro de estado fica em `~/.nexus-trading/nexus.sqlite3`. Nenhuma chave é necessária para esta parte.
+
+Para um teste isolado, executar `python nexus_termux.py --db /caminho/novo.sqlite3 --capital 10000`. O capital apenas é usado ao criar uma base nova. Para testes automáticos: `python -m unittest discover -s tests -p 'test_nexus_termux.py'`.
+
+## Como funciona
+
+O menu recebe cotações **manuais** com bid e ask; permite abrir e fechar posições simuladas, ver histórico e acompanhar P&L realizado. As posições ficam guardadas em SQLite. Ao atualizar uma cotação, o programa verifica os limites de stop e take-profit e simula o fecho no bid/ask informado, incluindo o spread. Se houver um salto de preço, o fecho é simulado na nova cotação, não no preço do stop. Apenas são verificados preços manualmente inseridos. Não há vigilância contínua; parar o programa ou não atualizar preços impede saídas automáticas.
+
+O tamanho é limitado por 1% do capital realizado por posição e 100% de exposição agregada em notional. O bloqueio de perda diária usa 3% do capital inicial e somente P&L fechado desde 00:00 UTC. São limites de protótipo; P&L não realizado, múltiplas posições, oscilações bruscas, comissões, swaps, granularidade de lotes, margens, latência, liquidez e risco real podem produzir perdas superiores. O capital apresentado é saldo realizado, não equity em tempo real. Não existe fonte de cotação, alerta de atualidade da fonte real nem automatismo de entrada. A idade dos dados mede apenas quando foram digitados.
+
+## Em falta
+
+A conexão ao grafo TradingAgents, DeepSeek/Gemini/OpenRouter, dados Forex verificados, fontes de notícias, análise automática, orquestração e execução autónoma ainda não foram implementadas ou testadas. Não assumir que o motor original ou as suas dependências funcionam no Android. Este protótipo foi testado fora do Termux e não foi validado no Realme C33. Apenas demonstra simulação manual e não é aconselhamento financeiro.
