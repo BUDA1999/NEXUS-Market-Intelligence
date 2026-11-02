@@ -1,52 +1,68 @@
-#!/usr/bin/env bash
-# TradingAgents by Tauric Research — NEXUS interface customization.
-# This banner checks files only; it does not start agents or connect APIs.
-repo="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)" || exit 1
-if [[ "${1:-}" == "--install" ]]; then
-  rc="$HOME/.bashrc"
-  touch "$rc"
-  if ! grep -Fq '# NEXUS_TRADINGAGENTS_FOLDER' "$rc"; then
-    cat >> "$rc" <<'HOOK'
+#!/data/data/com.termux/files/usr/bin/bash
+# JD NEXUS — Pisces Edition
+# Uso: bash nexus-banner.sh [--install|--remove]
+# Identidade visual apenas: não inicia agentes nem operações.
 
-# NEXUS_TRADINGAGENTS_FOLDER
-__nexus_previous_dir=""
-__nexus_folder_startup() {
-  local repo="$HOME/TradingAgents"
-  if [[ "$PWD" == "$repo" && "$__nexus_previous_dir" != "$PWD" ]]; then
-    bash "$repo/nexus-banner.sh"
+if [ "${1:-}" = "--install" ]; then
+  DEST="$HOME/.nexus-banner.sh"
+  if [ "$0" != "$DEST" ]; then
+    cp "$0" "$DEST" || { echo 'Erro ao copiar o banner.' >&2; exit 1; }
   fi
-  __nexus_previous_dir="$PWD"
-}
-PROMPT_COMMAND="${PROMPT_COMMAND:+${PROMPT_COMMAND};}__nexus_folder_startup"
+  chmod +x "$DEST" || exit 1
+  touch "$HOME/.bashrc" || exit 1
+  if ! grep -Fxq '# BEGIN JD NEXUS PISCES' "$HOME/.bashrc"; then
+    cat >> "$HOME/.bashrc" <<'HOOK'
+
+# BEGIN JD NEXUS PISCES
+[ -x "$HOME/.nexus-banner.sh" ] && "$HOME/.nexus-banner.sh"
+# END JD NEXUS PISCES
 HOOK
-    echo "NEXUS: configurado em $rc para $HOME/TradingAgents."
-  else
-    echo "NEXUS: configuração já presente em $rc."
   fi
+  echo '✔ Instalado. Fecha e abre o Termux.'
   exit 0
 fi
-if [[ -t 1 && -n "${TERM:-}" ]]; then clear; fi
-if [[ -t 1 ]]; then G=$'\033[1;32m'; C=$'\033[1;36m'; D=$'\033[0;90m'; R=$'\033[0m'; else G=''; C=''; D=''; R=''; fi
-printf '%s\n' "${G}  ████████╗ █████╗" '  ╚══██╔══╝██╔══██╗' '     ██║   ███████║' '     ██║   ██╔══██║' '     ██║   ██║  ██║' "     ╚═╝   ╚═╝  ╚═╝${R}"
-printf '\n%s\n' "${C}  TRADING AGENTS × N E X U S${R}" '  TAURIC RESEARCH FRAMEWORK' '  MULTI-AGENT LLM FINANCIAL TRADING FRAMEWORK' '  -------------------------------------------'
-check() {
-  if [[ -e "$repo/$1" ]]; then printf '  %s[FOUND]%s   %s\n' "$G" "$R" "$2"; else printf '  %s[MISSING]%s %s\n' "$D" "$R" "$2"; fi
+if [ "${1:-}" = "--remove" ]; then
+  if [ -f "$HOME/.bashrc" ]; then
+    tmp=$(mktemp "$HOME/.bashrc.nexus.XXXXXX") || exit 1
+    awk '/^# BEGIN JD NEXUS PISCES$/ {skip=1; next} /^# END JD NEXUS PISCES$/ {skip=0; next} !skip {print}' "$HOME/.bashrc" > "$tmp" || { rm -f "$tmp"; exit 1; }
+    cat "$tmp" > "$HOME/.bashrc" || { rm -f "$tmp"; exit 1; }
+    rm -f "$tmp"
+  fi
+  rm -f "$HOME/.nexus-banner.sh"
+  echo '✔ Removido.'
+  exit 0
+fi
+
+R=$'\033[0m'
+CY=$'\033[38;5;51m'
+CY2=$'\033[38;5;45m'
+CY3=$'\033[38;5;39m'
+WH=$'\033[1;97m'
+NV=$'\033[38;5;27m'
+W=36
+
+line() {
+  local c="$1" t="$2" n l r
+  n=${#t}; l=$(( (W - n) / 2 )); r=$(( W - n - l ))
+  printf '%s║%s%*s%s%s%s%*s%s║%s\n' "$NV" "$R" "$l" "" "$c" "$t" "$R" "$r" "" "$NV" "$R"
 }
-printf '\n%s\n' "${C}  REPOSITORY MODULES${R}"
-check 'tradingagents/agents' 'Agent modules'
-check 'tradingagents/graph' 'LangGraph engine'
-check 'tradingagents/default_config.py' 'Default config'
-check 'cli/main.py' 'CLI interface'
-check 'pyproject.toml' 'Python project'
-printf '\n%s\n' "${C}  AGENT ARCHITECTURE (FILES ONLY)${R}"
-check 'tradingagents/agents/analysts/fundamentals_analyst.py' 'Fundamentals analyst'
-check 'tradingagents/agents/analysts/sentiment_analyst.py' 'Sentiment analyst'
-check 'tradingagents/agents/analysts/news_analyst.py' 'News analyst'
-check 'tradingagents/agents/analysts/market_analyst.py' 'Market / technical analyst'
-check 'tradingagents/agents/researchers/bull_researcher.py' 'Bull researcher'
-check 'tradingagents/agents/researchers/bear_researcher.py' 'Bear researcher'
-check 'tradingagents/agents/managers/research_manager.py' 'Research manager'
-check 'tradingagents/agents/trader/trader.py' 'Trader'
-check 'tradingagents/agents/risk_mgmt' 'Risk management'
-check 'tradingagents/agents/managers/portfolio_manager.py' 'Portfolio manager'
-printf '\n%s\n' "${C}  NEXUS INTERFACE READY${R}" '  File checks only — agents and APIs not started.' "  $(date '+%d/%m/%Y %H:%M:%S')" '  Tauric Research × NEXUS customization' '  THINK BEYOND THE MARKET.'
+
+if [ -t 1 ] && [ -n "${TERM:-}" ]; then clear; fi
+printf '%s╔%s╗%s\n' "$NV" "$(printf '═%.0s' $(seq 1 $W))" "$R"
+line "$CY"  '≈  ≈≈  ≈≈≈  ≈≈  ≈  ≈≈  ≈≈≈  ≈≈  ≈'
+line ''     ''
+line "$CY"  '     ██╗██████╗ '
+line "$CY"  '     ██║██╔══██╗'
+line "$CY2" '     ██║██║  ██║'
+line "$CY2" '██   ██║██║  ██║'
+line "$CY3" '╚█████╔╝██████╔╝'
+line "$CY3" ' ╚════╝ ╚═════╝ '
+line ''     ''
+line "$WH"  '✦  ♓  ✦'
+line ''     ''
+line "$WH"  'P I S C E S  •  N E X U S'
+line "$CY"  '──────────────────────'
+line "$WH"  'THINK BEYOND THE MARKET'
+line ''     ''
+line "$CY"  '≈  ≈≈  ≈≈≈  ≈≈  ≈  ≈≈  ≈≈≈  ≈≈  ≈'
+printf '%s╚%s╝%s\n' "$NV" "$(printf '═%.0s' $(seq 1 $W))" "$R"
