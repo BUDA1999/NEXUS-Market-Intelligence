@@ -2,6 +2,15 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-04 — guia de instalação Termux por camadas
+
+- Adicionado `TERMUX-INSTALACAO.md`, com instalação/diagnóstico do painel primeiro e rota separada para tentar o motor original em proot-distro.
+- Incluídas instruções cautelosas de dependências, espaço, backup, chaves locais ignoradas pelo Git e recolha de erros sem segredos.
+- Conferido `pyproject.toml`: motor declara Python >=3.11 e pandas >=3.0.6. Não afirmamos incompatibilidade definitiva com Android sem testar pacotes.
+- Issues e pull requests públicos verificados: zero abertos.
+- Validação: revisão documental e conferência dos comandos com os ficheiros públicos; nenhuma execução foi feita no Termux.
+- Limitações: não testado no Realme/Android; proot e instalação nativa continuam por validar; painel não tem agentes ou cotações Forex ao vivo.
+
 ## 2026-11-04 — cópia de segurança SQLite
 
 - Adicionado `nexus_backup.py`, utilitário de linha de comando para criar snapshot consistente SQLite sem afetar o banco ativo; cria diretório de destino, recusa o próprio arquivo ativo e aceita caminho de destino separado.
