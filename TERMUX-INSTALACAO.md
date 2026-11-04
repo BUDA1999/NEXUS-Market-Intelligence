@@ -130,3 +130,18 @@ O uso de tickers Yahoo como `EURUSD=X` **não comprova** cotação Forex execut�
 ## O que enviar se falhar
 
 Envia o texto do erro e a saída de `python --version`, `uname -m`, `df -h "$HOME"` e o ponto em que falhou. Remove chaves, tokens, e-mail privado ou outros dados pessoais antes de partilhar. Distingue erro do painel NEXUS de erro de dependências do motor original.
+
+## Instalador e diagnóstico em etapas
+
+O instalador prepara apenas o básico para o painel paper, sem instalar o motor ou modificar `.env`. Pré-visualiza e depois executa:
+
+```bash
+bash install-termux.sh --dry-run
+bash install-termux.sh
+python -m cli.doctor --profile paper
+python -m cli.doctor --profile engine
+```
+
+O doctor usa apenas a biblioteca padrão. O perfil `engine` procura as dependências, mas encontrá-las não prova que suas versões são compatíveis ou que funcionam no Android.
+
+**Instalação nativa do motor não foi validada e está bloqueada no script.** `constraints-termux.txt` é experimental: a faixa `pandas<3` conflita com `pandas>=3.0.6` no `pyproject.toml`. Não força uma instalação com `--no-deps` nem substitui as dependências sem resolver essa incompatibilidade. A alternativa proot continua por testar no dispositivo.

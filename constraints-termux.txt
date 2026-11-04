@@ -1,0 +1,12 @@
+# NEXUS: ONLY for the explicitly experimental native Termux engine route.
+# Not used by the standard-library-only NEXUS Paper panel.
+# Termux pkg packages may supply native builds; these bounds do NOT prove
+# Android compatibility and must be checked against the installed versions.
+pandas>=2.2,<3
+numpy>=1.26,<2.4
+cryptography>=42
+pydantic>=2.7,<2.13
+pydantic-core>=2.18,<2.42
+curl_cffi>=0.7,<0.14
+setuptools>=61
+wheel

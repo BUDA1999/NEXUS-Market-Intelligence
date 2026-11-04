@@ -2,14 +2,15 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
-## 2026-11-04 — guia de instalação Termux por camadas
+## 2026-11-04 — instalação Termux em etapas e doctor sem dependências
 
-- Adicionado `TERMUX-INSTALACAO.md`, com instalação/diagnóstico do painel primeiro e rota separada para tentar o motor original em proot-distro.
-- Incluídas instruções cautelosas de dependências, espaço, backup, chaves locais ignoradas pelo Git e recolha de erros sem segredos.
-- Conferido `pyproject.toml`: motor declara Python >=3.11 e pandas >=3.0.6. Não afirmamos incompatibilidade definitiva com Android sem testar pacotes.
-- Issues e pull requests públicos verificados: zero abertos.
-- Validação: revisão documental e conferência dos comandos com os ficheiros públicos; nenhuma execução foi feita no Termux.
-- Limitações: não testado no Realme/Android; proot e instalação nativa continuam por validar; painel não tem agentes ou cotações Forex ao vivo.
+- Adicionado `cli/doctor.py`, diagnóstico com Python standard library que pode correr quando dependências do motor estão ausentes; suporta perfis `paper`/`engine` e JSON, sem imprimir valores de chaves.
+- Adicionado `install-termux.sh`: por defeito prepara apenas o básico para o painel; `--install-engine` está bloqueado enquanto constraints conflitam com o requisito original. `--dry-run` e `--skip-system` disponíveis.
+- Adicionado `constraints-termux.txt` apenas para rota nativa experimental; a faixa Pandas não satisfaz o requisito upstream `pandas>=3.0.6`, portanto não representa instalação suportada do motor.
+- Atualizado `TERMUX-INSTALACAO.md` com instruções do instalador e bloqueio explícito da instalação incompatível.
+- Comentários/issues/PRs públicos consultados: nenhum aberto.
+- Testes locais: `python -m unittest discover -s tests -v` (7 testes novos e backup incluído); `bash -n install-termux.sh`; `python -m py_compile cli/doctor.py nexus_backup.py`. Ambiente Linux x86_64, não Termux.
+- Limitações: instalação nativa/proot não validada; nenhuma integração IA/Forex executada.
 
 ## 2026-11-04 — cópia de segurança SQLite
 
