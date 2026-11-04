@@ -192,7 +192,7 @@ def show(n):
     if sys.stdout.isatty():
         print("\033[2J\033[H", end="")
     print("\033[38;5;45m╔══════════════════════════════════════════════╗\033[0m")
-    print("\033[38;5;45m║       TRADING AGENTS  ×  N E X U S          ║\033[0m")
+    print("\033[38;5;45m║       NEXUS MARKET INTELLIGENCE             ║\033[0m")
     print("\033[38;5;45m║        TERMUX PAPER TRADING • OFFLINE        ║\033[0m")
     print("\033[38;5;45m╚══════════════════════════════════════════════╝\033[0m")
     print(" SIMULAÇÃO APENAS — SEM BROKER / SEM COTAÇÕES AO VIVO")

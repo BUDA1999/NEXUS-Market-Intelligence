@@ -2,6 +2,13 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-04 — novo nome do projeto
+
+- Repositório renomeado para NEXUS Market Intelligence; painel atualizado para mostrar o novo nome.
+- Preservada a atribuição ao projeto original TradingAgents da Tauric Research.
+- Testes: `python -m unittest discover -s tests -p test_nexus_termux.py -v` (7 testes fora do Android).
+- Compatibilidade Termux ainda não validada no dispositivo.
+
 ## 2026-11-04 — validação e teste opcional de API
 
 - Adicionado `nexus_safety.py`, a partir do patch de auditoria enviado: valida bid/ask, origem, horário, frescura e risco linear genérico. Testes adicionais rejeitam timestamps futuros e quantidades não finitas.
