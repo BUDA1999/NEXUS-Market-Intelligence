@@ -2,6 +2,14 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-05 — identidade JD Pisces no painel
+
+- Adicionado `jd_banner.py` com moldura azul-neon, peixes azul/dourado, iniciais JD, símbolo ♓ PEIXES e slogan STAY LIVE.
+- Integrado uma vez no arranque do menu em `nexus_termux.py`; o menu, posições, cotações manuais e persistência SQLite foram preservados.
+- Adicionado teste de apresentação que confirma os elementos visuais e a preservação dos dados de menu.
+- Testes locais: `python -m unittest discover -s tests -v` — 8 testes do painel passaram fora do Termux.
+- Limitação: o visual foi testado em Linux, não no Realme/Termux; cores dependem do terminal.
+
 ## 2026-11-04 — instalação Termux em etapas e doctor sem dependências
 
 - Adicionado `cli/doctor.py`, diagnóstico com Python standard library que pode correr quando dependências do motor estão ausentes; suporta perfis `paper`/`engine` e JSON, sem imprimir valores de chaves.

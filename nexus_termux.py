@@ -189,12 +189,6 @@ class Nexus:
 
 def fmt_money(x): return f"${D(x):,.2f}"
 def show(n):
-    if sys.stdout.isatty():
-        print("\033[2J\033[H", end="")
-    print("\033[38;5;45m╔══════════════════════════════════════════════╗\033[0m")
-    print("\033[38;5;45m║       NEXUS MARKET INTELLIGENCE             ║\033[0m")
-    print("\033[38;5;45m║        TERMUX PAPER TRADING • OFFLINE        ║\033[0m")
-    print("\033[38;5;45m╚══════════════════════════════════════════════╝\033[0m")
     print(" SIMULAÇÃO APENAS — SEM BROKER / SEM COTAÇÕES AO VIVO")
     print(f" Capital: {fmt_money(n.equity())} | P&L diário fechado: {fmt_money(n.daily_pnl())}")
     print("─"*50)
@@ -207,6 +201,8 @@ def show(n):
 def prompt_decimal(label): return dec(input(label).strip(), label)
 
 def run_menu(n):
+    from jd_banner import jd_banner
+    jd_banner()
     while True:
         show(n)
         choice=input("\nNEXUS > ").strip()
