@@ -2,6 +2,14 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-05 — opções do painel Paper
+
+- Mantidos sem alteração de significado os comandos numéricos `0`–`5`; adicionados `6` resumo, `7` detalhes, `8` limites de risco, `9` exportação CSV/TXT, `b` backup SQLite, `r` restauro confirmado e `h` ajuda.
+- Resumo e detalhes são somente leitura. Acrescentados limites configuráveis com tetos fixos; as alterações são validadas por inteiro e persistidas.
+- Exportação gera CSV/TXT. Restauro valida integridade e esquema, faz automaticamente uma cópia pré-restauro e depois usa a API de cópia SQLite para restituir a base ativa. A confirmação exige digitar `RESTORE`.
+- Testes: `python -m unittest discover -s tests -v` — 17 testes do painel passaram fora do Termux, incluindo preservação dos números do menu e ciclo de backup/restauro.
+- Limitações: continua Paper Trading com cotações manuais; P&L não realizado é estimativa, não equity de corretora. Código testado fora do Android, não no Realme/Termux.
+
 ## 2026-11-05 — identidade JD Pisces no painel
 
 - Adicionado `jd_banner.py` com moldura azul-neon, peixes azul/dourado, iniciais JD, símbolo ♓ PEIXES e slogan STAY LIVE.
