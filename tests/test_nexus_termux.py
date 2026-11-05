@@ -1,8 +1,11 @@
 import tempfile
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
 from decimal import Decimal as D
 from pathlib import Path
-from nexus_termux import Nexus
+from nexus_termux import Nexus, show, run_menu
+from unittest.mock import patch
 
 class TermuxPaperTests(unittest.TestCase):
     def setUp(self):
@@ -10,6 +13,18 @@ class TermuxPaperTests(unittest.TestCase):
         self.n=Nexus(Path(self.tmp.name)/'test.db',D('10000'))
         self.n.update_quote('EUR/USD','1.0999','1.1001')
     def tearDown(self): self.n.close(); self.tmp.cleanup()
+
+    def test_show_has_identity_and_keeps_menu_features(self):
+        output=StringIO()
+        with patch('builtins.input',side_effect=['0']), redirect_stdout(output): run_menu(self.n)
+        text=output.getvalue()
+        for required in ('JD NEXUS MARKET INTELLIGENCE','♓ PEIXES','STAY LIVE',
+                         'COTAÇÕES MANUAIS','1 Atualizar cotação manual',
+                         '2 Nova posição simulada','4 Histórico'):
+            self.assertIn(required,text)
+        self.assertEqual(len(self.n.positions()),0)
+        self.assertEqual(len(self.n.quotes()),1)
+
     def test_buy_sizes_and_persists(self):
         p=self.n.open_position('EUR/USD','BUY','1.09','1.12')
         self.assertEqual(p['mode'],'PAPER_ONLY')
