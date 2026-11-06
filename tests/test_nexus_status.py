@@ -32,7 +32,7 @@ class StatusTests(unittest.TestCase):
             try:
                 out=StringIO()
                 with patch('builtins.input',side_effect=['a','','0']), redirect_stdout(out): run_menu(n)
-                self.assertIn('LOCAL CHECKS',out.getvalue())
+                self.assertIn('ESTADO LOCAL',out.getvalue())
                 self.assertIn('não integrado ao painel',out.getvalue())
                 self.assertIn('Ordens reais: desativadas',out.getvalue())
             finally: n.close()

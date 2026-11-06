@@ -52,6 +52,9 @@ class UiTests(unittest.TestCase):
             self.assertNotIn(pending,text)
         selected=StringIO(); render_menu(selected,width=40,selected='4')
         self.assertIn('> 4 Histórico',selected.getvalue())
+    def test_launcher_does_not_print_duplicate_oversized_banner(self):
+        launcher=Path(__file__).resolve().parents[1]/"nexus-start.sh"
+        self.assertNotIn('nexus-banner.sh" ]; then bash',launcher.read_text())
     def test_terminal_width_falls_back_to_40(self):
         class Broken:
             def fileno(self): raise OSError
