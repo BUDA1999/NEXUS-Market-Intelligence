@@ -27,3 +27,7 @@ Restauro substitui as posições/configurações atuais pela base escolhida apó
 ## Estado do sistema
 
 A opção `a` verifica localmente módulos, presença de chaves no ambiente sem exibir valores e integridade SQLite. Não verifica `.env`, conectividade ou fornecedores online; IA, feed Forex e broker continuam não integrados ao painel.
+
+## Interface JD NEXUS compacta
+
+O painel apresenta cabeçalho pequeno (o arranque já não desenha banner separado) e secções de estado, mercado manual, conta Paper e agentes desativados. A largura adapta-se ao terminal e palavras longas são quebradas entre palavras; cores só são ativadas em terminal interativo. Sem animação nem pedidos de rede. `0`–`9` conservam as funções anteriores. Agentes, feed Forex e broker são estados desconectados/pendentes, não operações disponíveis.

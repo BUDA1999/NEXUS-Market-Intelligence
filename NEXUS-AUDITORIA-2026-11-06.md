@@ -32,3 +32,7 @@ Repositório efetivo: https://github.com/BUDA1999/NEXUS-Market-Intelligence (o e
 6. Planejar adaptadores de corretora somente numa fase futura separada: sem ligação a conta real até validações rigorosas e autorização expressa do utilizador.
 
 Todas as etapas dependentes de APIs reais exigem fornecedor, credenciais e eventual plano/custos; nenhum segredo deve ser incluído no repositório ou numa captura. O estado atual não é produção.
+
+## Adenda — interface compacta
+
+Foi criada uma camada de apresentação independente `nexus_ui.py`, mantendo o menu e o motor Paper existente. A vista identifica cotações manuais ou indisponíveis, sem assumir variação. Todos os agentes aparecem como DISABLED porque não há execução do grafo pelo painel. O teste automatizado cobre larguras de 24, 40 e 45 colunas em Linux; requer confirmação visual no Termux.

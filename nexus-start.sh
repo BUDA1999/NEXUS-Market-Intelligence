@@ -6,5 +6,4 @@ if ! command -v python >/dev/null 2>&1; then
   echo 'Python não encontrado. No Termux instala com: pkg install python' >&2
   exit 1
 fi
-if [ -f "$DIR/nexus-banner.sh" ]; then bash "$DIR/nexus-banner.sh"; fi
 exec python "$DIR/nexus_termux.py" "$@"

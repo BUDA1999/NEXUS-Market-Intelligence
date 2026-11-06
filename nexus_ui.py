@@ -64,8 +64,9 @@ def render_dashboard(n, status, stream=None, width=None):
     colors=(CYAN,enabled,BLUE)
     render_header(stream,width)
     _section("SYSTEM STATUS",inner,stream,colors)
-    health=("ERROR: SQLite check failed" if status.get("database_integrity") not in ("ok","not-checked")
-            else "LOCAL CHECKS OK" if status.get("database_exists") else "LOCAL DB NOT CREATED")
+    integrity = status.get("database_integrity", "not-checked")
+    health = ("SQLite read error" if integrity not in ("ok", "not-checked", "não verificada")
+              else "SQLite accessible; no full check")
     state_lines=["AI: DISCONNECTED (not integrated)","MARKET: MANUAL QUOTES ONLY",
                  "BROKER: NOT CONFIGURED","MODE: PAPER ONLY","HEALTH: "+health]
     for line in state_lines:
@@ -73,19 +74,22 @@ def render_dashboard(n, status, stream=None, width=None):
     _section("MARKET OVERVIEW | timeframe: n/a",inner,stream,colors)
     for symbol in ("EUR/USD","XAU/USD"):
         for part in _wrap(f"{symbol}: {_quote_state(n,symbol)}",inner): print(part,file=stream)
-        for part in _wrap("change / direction: unavailable (no live feed)",inner): print(part,file=stream)
+    for part in _wrap("change / direction: unavailable (no live feed)",inner): print(part,file=stream)
     s=n.summary()
     _section("PAPER ACCOUNT",inner,stream,colors)
-    account=[f"Balance (paper units): {s['equity']:.2f}",
-             f"Daily P&L: {s['daily_pnl']:.2f} | Unrealized est.: {s['unrealized']:.2f}",
+    unrealized = ("unavailable (no quote)" if s['unpriced'] else f"{s['unrealized']:.2f} (estimate)")
+    account=[f"Balance (paper): {s['equity']:.2f}",
+             "Available capital: n/a (no margin model)",
+             f"Daily P&L (UTC): {s['daily_pnl']:.2f}", f"Unrealized P&L: {unrealized}",
              f"Open positions: {s['open_count']} | Closed: {s['closed_count']}",
-             f"Risk used: {s['exposure']:.2f} / cap {s['exposure_cap']:.2f}"]
+             f"Exposure: {s['exposure']:.2f} / {s['exposure_cap']:.2f}",
+             f"Daily P&L remaining: {s['daily_remaining']:.2f} (realized only)"]
     for line in account:
         for part in _wrap(line,inner): print(part,file=stream)
-    _section("AI AGENTS | all DISABLED (not integrated)",inner,stream,colors)
+    _section("AI AGENTS | all DISABLED",inner,stream,colors)
+    for part in _wrap("Provider/model: not configured",inner): print(part,file=stream)
     for name in AGENT_NAMES:
-        line=f"{name}: DISABLED | provider/model: n/a"
-        for part in _wrap(line,inner): print(part,file=stream)
+        for part in _wrap(name+": DISABLED",inner): print(part,file=stream)
 
 def render_menu(stream=None,width=None,selected=None):
     stream=stream or sys.stdout; width=width or terminal_width(stream); inner=max(20,width-2)

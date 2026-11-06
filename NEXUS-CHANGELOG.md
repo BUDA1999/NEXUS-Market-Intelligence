@@ -2,6 +2,14 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-06 — redesenho responsivo do terminal JD NEXUS
+
+- Substituído o banner alto no fluxo do painel por cabeçalho compacto JD NEXUS / ♓ PISCES EDITION / THINK BEYOND THE MARKET e identidade visual de peixes; atualizado `nexus-start.sh` para remover o banner shell duplicado/limpar e não sobrepor o dashboard.
+- Nova apresentação por secções: estado, mercado EUR/USD e XAU/USD, conta Paper, dez agentes e menu de operações. Estados de cotações sem feed, agentes não ligados, modelo desconhecido e broker ausente são explicitamente honestos; sem simular variações, atividade, preços ou conectividade.
+- Criado `nexus_ui.py` como camada de apresentação independente do motor; largura obtida dinamicamente, quebra sem dividir palavras, cores ANSI só em TTY e selecionado indicado com `>`. Sem animação, dependências novas, redraw contínuo ou alteração da lógica Paper.
+- Os números existentes `0`–`9` mantêm as suas ações; `a`, `b`, `h`, `r` continuam disponíveis. Menu mostra apenas as ações que existem, não exibe ordem real ou análise de IA como funcional.
+- Testes locais: 30 testes de status, UI e regressão Paper passaram em Linux, incluindo largura 24/40/45 colunas, execução honesta dos estados, seleção visual e preservação das funções existentes. `py_compile` executado. Não validado no Termux/aparelho.
+
 ## 2026-11-06 — auditoria e estado local no painel
 
 - Adicionado `NEXUS-AUDITORIA-2026-11-06.md` com estado real, bloqueios, testes e plano por prioridades; sem declarar produção.
