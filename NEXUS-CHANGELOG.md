@@ -2,6 +2,12 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-06 — auditoria e estado local no painel
+
+- Adicionado `NEXUS-AUDITORIA-2026-11-06.md` com estado real, bloqueios, testes e plano por prioridades; sem declarar produção.
+- Adicionado `nexus_status.py` e opção `a` no painel: dependências detetadas, presença de chaves apenas no processo sem exibir valores, integridade SQLite em leitura e estados honestos da IA/mercado/automação/broker. Não faz chamadas de rede nem inicia agentes.
+- Testes: 21 testes do painel e status passaram em Linux; suíte upstream completa não foi concluída e não foi validada no Android nesta sessão. Mantidos os restantes comandos do menu e Paper Trading.
+
 ## 2026-11-05 — opções do painel Paper
 
 - Mantidos sem alteração de significado os comandos numéricos `0`–`5`; adicionados `6` resumo, `7` detalhes, `8` limites de risco, `9` exportação CSV/TXT, `b` backup SQLite, `r` restauro confirmado e `h` ajuda.

@@ -23,3 +23,7 @@ A conexão ao grafo TradingAgents, DeepSeek/Gemini/OpenRouter, dados Forex verif
 Os comandos originais mantêm o significado: `0` sair, `1` atualizar cotação manual, `2` abrir posição simulada, `3` abertas, `4` histórico, `5` fechar posição simulada. Opções adicionadas: `6` resumo de conta (estimativas), `7` detalhes por ID, `8` ajustar limites de risco dentro de tetos rígidos, `9` exportar CSV/TXT, `b` criar backup da base, `r` restaurar uma cópia (pede confirmação `RESTORE` e cria backup do estado atual antes), `h` ajuda. O relatório e backup ficam sob o diretório de dados NEXUS em `~/.nexus-trading/`.
 
 Restauro substitui as posições/configurações atuais pela base escolhida após verificar integridade. Mantém cópias de segurança importantes fora do telefone antes de experimentar e fecha outras sessões NEXUS antes do restauro.
+
+## Estado do sistema
+
+A opção `a` verifica localmente módulos, presença de chaves no ambiente sem exibir valores e integridade SQLite. Não verifica `.env`, conectividade ou fornecedores online; IA, feed Forex e broker continuam não integrados ao painel.

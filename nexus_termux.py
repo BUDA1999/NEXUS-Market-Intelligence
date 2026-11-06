@@ -348,7 +348,7 @@ def show(n):
     print(" 6 Resumo da conta             7 Detalhes da posição")
     print(" 8 Configurar limites          9 Exportar relatório")
     print(" b Backup da base              r Restaurar backup")
-    print(" h Ajuda")
+    print(" h Ajuda                       a Estado do sistema")
 
 
 def prompt_decimal(label): return dec(input(label).strip(), label)
@@ -387,10 +387,14 @@ def show_risk(n):
                        max_exposure=dec(c,"exposição")/100 if c else None)
     print("Limites atualizados." if changes else "Sem alterações.")
 
+def show_system_status(n):
+    from nexus_status import inspect_status, format_status
+    print(format_status(inspect_status(n.path)))
+
 def show_help():
     print("\nNEXUS Market Intelligence — ajuda")
     print("0 sair | 1 cotação manual | 2 abrir simulada | 3 abertas | 4 histórico | 5 fechar simulada")
-    print("6 resumo | 7 detalhes | 8 limites | 9 exportar CSV/TXT | b cópia SQLite | r restaurar | h ajuda")
+    print("6 resumo | 7 detalhes | 8 limites | 9 exportar CSV/TXT | b backup | r restaurar | a estado | h ajuda")
     print("Só Paper Trading. Sem API de mercado, corretora, preço ao vivo ou monitorização em background.")
     print("Restauro substitui o estado atual, após criar automaticamente uma cópia de segurança.")
 
@@ -436,6 +440,7 @@ def run_menu(n):
                     if not 1 <= selected <= len(backups): raise ValueError("seleção fora da lista")
                     if input("Restauro substitui o estado atual. Escreve RESTORE para confirmar: ").strip()!="RESTORE": print("Restauro cancelado.")
                     else: print("Restaurado; cópia do estado anterior:",n.restore_database(backups[selected-1]))
+            elif choice=="a": show_system_status(n)
             elif choice=="h": show_help()
             else: print("Opção inválida.")
         except (ValueError, sqlite3.Error, OSError) as exc: print(f"\033[31mNão executado: {exc}\033[0m")
