@@ -14,13 +14,14 @@ class TermuxPaperTests(unittest.TestCase):
         self.n.update_quote('EUR/USD','1.0999','1.1001')
     def tearDown(self): self.n.close(); self.tmp.cleanup()
 
-    def test_show_has_identity_and_keeps_menu_features(self):
+    def test_show_has_compact_identity_status_and_existing_menu(self):
         output=StringIO()
-        with patch('builtins.input',side_effect=['0']), redirect_stdout(output): run_menu(self.n)
+        with redirect_stdout(output): show(self.n)
         text=output.getvalue()
-        for required in ('JD NEXUS MARKET INTELLIGENCE','♓ PEIXES','STAY LIVE',
-                         'COTAÇÕES MANUAIS','1 Atualizar cotação manual',
-                         '2 Nova posição simulada','4 Histórico'):
+        for required in ('JD NEXUS','PISCES EDITION','THINK BEYOND THE MARKET',
+                         'SYSTEM STATUS','MARKET OVERVIEW','PAPER ACCOUNT',
+                         'AI AGENTS','MANUAL','DISCONNECTED','BROKER: NOT CONFIGURED',
+                         '1 Cotação manual','2 Abrir posição (paper)','4 Histórico'):
             self.assertIn(required,text)
         self.assertEqual(len(self.n.positions()),0)
         self.assertEqual(len(self.n.quotes()),1)
@@ -75,11 +76,11 @@ class TermuxPaperTests(unittest.TestCase):
         out=StringIO()
         with redirect_stdout(out): show(self.n)
         text=out.getvalue()
-        self.assertIn("1 Atualizar cotação manual",text)
-        self.assertIn("2 Nova posição simulada",text)
+        self.assertIn("1 Cotação manual",text)
+        self.assertIn("2 Abrir posição (paper)",text)
         self.assertIn("3 Posições abertas",text)
         self.assertIn("4 Histórico",text)
-        self.assertIn("5 Fechar posição",text)
+        self.assertIn("5 Fechar posição (paper)",text)
         self.assertIn("0 Sair",text)
         self.assertIn("6 Resumo da conta",text)
 
@@ -90,7 +91,7 @@ class TermuxPaperTests(unittest.TestCase):
         with patch('builtins.input',side_effect=inputs), redirect_stdout(output): run_menu(self.n)
         text=output.getvalue()
         for value in ('RESUMO DA CONTA','Risco estimado até SL','Sem alterações.',
-                      'Exportados:','Cópia criada:','Restauro cancelado.','ajuda'):
+                      'Exportados:','Cópia criada:','Restauro cancelado.','JD NEXUS'):
             self.assertIn(value,text)
         self.assertEqual(len(self.n.positions('OPEN')),1)
 
