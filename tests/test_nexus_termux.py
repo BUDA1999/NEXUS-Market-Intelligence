@@ -19,9 +19,9 @@ class TermuxPaperTests(unittest.TestCase):
         with redirect_stdout(output): show(self.n)
         text=output.getvalue()
         for required in ('JD NEXUS','PISCES EDITION','THINK BEYOND THE MARKET',
-                         'SYSTEM STATUS','MARKET OVERVIEW','PAPER ACCOUNT',
-                         'AI AGENTS','MANUAL','DISCONNECTED','BROKER: NOT CONFIGURED',
-                         '1 Cotação manual','2 Abrir posição (paper)','4 Histórico'):
+                         'STATUS: PAPER LOCAL','MERCADO','CONTA PAPER',
+                         'AGENTES IA','MANUAIS','IA: NÃO LIGADA','BROKER: NÃO',
+                         '[1] Cotação manual','[2] Nova posição PAPER','[4] Histórico'):
             self.assertIn(required,text)
         self.assertEqual(len(self.n.positions()),0)
         self.assertEqual(len(self.n.quotes()),1)
@@ -76,13 +76,13 @@ class TermuxPaperTests(unittest.TestCase):
         out=StringIO()
         with redirect_stdout(out): show(self.n)
         text=out.getvalue()
-        self.assertIn("1 Cotação manual",text)
-        self.assertIn("2 Abrir posição (paper)",text)
-        self.assertIn("3 Posições abertas",text)
-        self.assertIn("4 Histórico",text)
-        self.assertIn("5 Fechar posição (paper)",text)
-        self.assertIn("0 Sair",text)
-        self.assertIn("6 Resumo da conta",text)
+        self.assertIn("[1] Cotação manual",text)
+        self.assertIn("[2] Nova posição PAPER",text)
+        self.assertIn("[3] Posições abertas",text)
+        self.assertIn("[4] Histórico",text)
+        self.assertIn("[5] Fechar posição PAPER",text)
+        self.assertIn("[0] Sair",text)
+        self.assertIn("[6] Resumo da conta",text)
 
     def test_menu_workflows_summary_help_export_backup_restore(self):
         self.n.open_position('EUR/USD','BUY','1.09','1.12')
