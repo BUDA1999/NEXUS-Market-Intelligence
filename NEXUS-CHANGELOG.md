@@ -2,6 +2,13 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-06 — moldura compacta no estilo JD NEXUS
+
+- Ajustado `nexus_ui.py` para uma moldura terminal com logótipo JD em ASCII, ♓ Pisces, dois peixes, slogan, secções do exemplo e menu compacto em duas colunas em terminais largos; em 24–45 colunas quebra para uma coluna sem overflow.
+- Mostra Paper/local, cotações manuais e ordens reais desativadas; evita “online/real” e exibe quando cada cotação está ausente/antiga. Removida variação fictícia; agentes ficam DISABLED.
+- Compatibilidade preservada: números `0–9` conservam as ações; opções extra permanecem visíveis. Nenhuma dependência ou alteração de trading.
+- Testes: 31 testes em Linux passaram, incluindo larguras 24, 40, 42, 45 e 60; modo de cores sem TTY e execução Paper. Android/Termux não validado.
+
 ## 2026-11-06 — redesenho responsivo do terminal JD NEXUS
 
 - Substituído o banner alto no fluxo do painel por cabeçalho compacto JD NEXUS / ♓ PISCES EDITION / THINK BEYOND THE MARKET e identidade visual de peixes; atualizado `nexus-start.sh` para remover o banner shell duplicado/limpar e não sobrepor o dashboard.

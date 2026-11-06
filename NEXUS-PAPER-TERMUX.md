@@ -31,3 +31,7 @@ A opção `a` verifica localmente módulos, presença de chaves no ambiente sem 
 ## Interface JD NEXUS compacta
 
 O painel apresenta cabeçalho pequeno (o arranque já não desenha banner separado) e secções de estado, mercado manual, conta Paper e agentes desativados. A largura adapta-se ao terminal e palavras longas são quebradas entre palavras; cores só são ativadas em terminal interativo. Sem animação nem pedidos de rede. `0`–`9` conservam as funções anteriores. Agentes, feed Forex e broker são estados desconectados/pendentes, não operações disponíveis.
+
+## Variação compacta com moldura
+
+A moldura exibe JD/♓/peixes e slogan. Em terminais com largura suficiente, menu em duas colunas; no telemóvel, uma coluna. O estado continua Paper/local, cotações manuais, sem feed, sem broker e sem ordens reais.
