@@ -336,20 +336,11 @@ class Nexus:
 
 
 def fmt_money(x): return f"${D(x):,.2f}"
-def show(n):
-    print(" SIMULAÇÃO APENAS — SEM BROKER / SEM COTAÇÕES AO VIVO")
-    s=n.summary()
-    print(f" Capital: {fmt_money(s['equity'])} | P&L diário fechado: {fmt_money(s['daily_pnl'])}")
-    print("─"*50)
-    for q in n.quotes(): print(f" {q['symbol']:7} bid {q['bid']} / ask {q['ask']} [manual]")
-    print("\n 1 Atualizar cotação manual   2 Nova posição simulada")
-    print(" 3 Posições abertas           4 Histórico")
-    print(" 5 Fechar posição              0 Sair")
-    print(" 6 Resumo da conta             7 Detalhes da posição")
-    print(" 8 Configurar limites          9 Exportar relatório")
-    print(" b Backup da base              r Restaurar backup")
-    print(" h Ajuda                       a Estado do sistema")
-
+def show(n, selected=None):
+    from nexus_ui import render_dashboard, render_menu
+    from nexus_status import inspect_status
+    render_dashboard(n, inspect_status(n.path))
+    render_menu(selected=selected)
 
 def prompt_decimal(label): return dec(input(label).strip(), label)
 
@@ -399,11 +390,11 @@ def show_help():
     print("Restauro substitui o estado atual, após criar automaticamente uma cópia de segurança.")
 
 def run_menu(n):
-    from jd_banner import jd_banner
-    jd_banner()
+    selected=None
     while True:
-        show(n)
+        show(n, selected)
         choice=input("\nNEXUS > ").strip().lower()
+        selected=choice
         try:
             if choice=="0": return
             elif choice=="1":
