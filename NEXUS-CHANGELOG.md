@@ -2,6 +2,13 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-07 — kill switch persistente de novas posições Paper
+
+- Adicionado controlo explícito de ativação `HALT` e retoma `RESUME` via opção `k`, guardado em `settings.paper_halted` sem migração nem perda dos dados SQLite existentes.
+- A criação de novas posições verifica o estado persistido; o estado corrompido/inesperado falha fechado. O kill switch bloqueia só novas entradas: posições abertas continuam geríveis/fecháveis e o limite diário de perda segue ativo.
+- O dashboard e o resumo identificam o estado; opções existentes `0–9`, `a`, `b`, `r`, `h` permanecem no menu. Sem broker, operações reais, automação ou feed.
+- Testes em Linux Python 3.13: 20 testes do painel passaram, incluindo reinício, reativação, dado inválido e gestão de posição preexistente. Termux/Android não testado.
+
 ## 2026-11-06 — moldura compacta no estilo JD NEXUS
 
 - Ajustado `nexus_ui.py` para uma moldura terminal com logótipo JD em ASCII, ♓ Pisces, dois peixes, slogan, secções do exemplo e menu compacto em duas colunas em terminais largos; em 24–45 colunas quebra para uma coluna sem overflow.

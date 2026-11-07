@@ -20,7 +20,7 @@ A conexão ao grafo TradingAgents, DeepSeek/Gemini/OpenRouter, dados Forex verif
 
 ## Opções do menu
 
-Os comandos originais mantêm o significado: `0` sair, `1` atualizar cotação manual, `2` abrir posição simulada, `3` abertas, `4` histórico, `5` fechar posição simulada. Opções adicionadas: `6` resumo de conta (estimativas), `7` detalhes por ID, `8` ajustar limites de risco dentro de tetos rígidos, `9` exportar CSV/TXT, `b` criar backup da base, `r` restaurar uma cópia (pede confirmação `RESTORE` e cria backup do estado atual antes), `h` ajuda. O relatório e backup ficam sob o diretório de dados NEXUS em `~/.nexus-trading/`.
+Os comandos originais mantêm o significado: `0` sair, `1` atualizar cotação manual, `2` abrir posição simulada, `3` abertas, `4` histórico, `5` fechar posição simulada. Opções adicionadas: `6` resumo de conta (estimativas), `7` detalhes por ID, `8` ajustar limites de risco dentro de tetos rígidos, `9` exportar CSV/TXT, `b` criar backup da base, `r` restaurar uma cópia (pede confirmação `RESTORE` e cria backup do estado atual antes), `a` estado local, `k` kill switch Paper persistente, `h` ajuda. O relatório e backup ficam sob o diretório de dados NEXUS em `~/.nexus-trading/`.
 
 Restauro substitui as posições/configurações atuais pela base escolhida após verificar integridade. Mantém cópias de segurança importantes fora do telefone antes de experimentar e fecha outras sessões NEXUS antes do restauro.
 
@@ -35,3 +35,7 @@ O painel apresenta cabeçalho pequeno (o arranque já não desenha banner separa
 ## Variação compacta com moldura
 
 A moldura exibe JD/♓/peixes e slogan. Em terminais com largura suficiente, menu em duas colunas; no telemóvel, uma coluna. O estado continua Paper/local, cotações manuais, sem feed, sem broker e sem ordens reais.
+
+## Kill switch persistente Paper
+
+A opção `k` bloqueia novas posições simuladas usando o registo `paper_halted` na tabela `settings` já existente; não altera o esquema da base e sobrevive a reinícios do processo. Ativar exige escrever `HALT`; desativar exige escrever `RESUME`. Estado desconhecido/corrompido falha fechado e impede novas posições. O bloqueio é apenas do painel Paper, não fecha automaticamente posições existentes, que continuam a poder ser geridas/fechadas manualmente. O limite diário de perdas mantém-se independente e também bloqueia novas entradas. Não há ligação de corretora, execução real, monitorização de fundo ou promessa de proteção contra perdas.

@@ -133,8 +133,32 @@ class Nexus:
                 raise ValueError("cotação manual antiga ou com horário futuro; atualiza bid/ask antes da ordem")
         return q
 
+    def manual_halt(self):
+        """Read the persistent Paper kill switch; unknown states fail closed."""
+        raw = self.setting("paper_halted")
+        if raw is None or raw == "0":
+            return False
+        if raw == "1":
+            return True
+        raise ValueError("estado do kill switch inválido; Paper bloqueado")
+
+    def set_kill_switch(self, halted, reason="manual"):
+        """Persist the Paper-only entry stop. Existing positions remain manageable."""
+        if not isinstance(halted, bool):
+            raise ValueError("estado do kill switch deve ser booleano")
+        with self.db:
+            self.db.execute(
+                "INSERT INTO settings(key,value) VALUES('paper_halted',?) "
+                "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                ("1" if halted else "0",),
+            )
+            self.db.execute("INSERT INTO events(at,kind,payload) VALUES(?,?,?)",
+                            (stamp(), "PAPER_KILL_SWITCH", json.dumps(
+                                {"halted": halted, "reason": str(reason)[:120]}, sort_keys=True)))
+        return halted
+
     def halted(self):
-        return self.daily_pnl() <= -self.initial_capital * self.max_daily_loss
+        return self.manual_halt() or self.daily_pnl() <= -self.initial_capital * self.max_daily_loss
 
     def open_position(self, symbol, side, stop, target, risk_fraction=None):
         side = side.upper()
@@ -153,7 +177,9 @@ class Nexus:
             raise ValueError("BUY exige stop < entrada < alvo; SELL exige alvo < entrada < stop")
         equity = self.equity()
         daily = self.daily_pnl()
-        if equity <= 0 or self.halted():
+        if self.manual_halt():
+            raise ValueError("kill switch Paper persistente ativo; novas posições bloqueadas")
+        if equity <= 0 or self.daily_pnl() <= -self.initial_capital * self.max_daily_loss:
             raise ValueError(f"limite de perda diária ({self.max_daily_loss * 100}% do capital inicial) atingido")
         unit_risk = abs(entry - stop)
         units_by_risk = equity * risk_fraction / unit_risk
@@ -236,7 +262,7 @@ class Nexus:
                 "unrealized": sum((x for x in marks if x is not None), D(0)),
                 "unpriced": sum(x is None for x in marks), "daily_pnl": daily,
                 "daily_limit": loss_limit, "daily_remaining": max(D(0), loss_limit+daily),
-                "halted": self.halted(), "open_count": len(opened), "closed_count": closed,
+                "halted": self.halted(), "manual_halt": self.manual_halt(), "open_count": len(opened), "closed_count": closed,
                 "exposure": exposure, "exposure_cap": equity*self.max_exposure,
                 "max_risk": self.max_risk, "max_daily_loss": self.max_daily_loss,
                 "max_exposure": self.max_exposure}
@@ -355,7 +381,7 @@ def show_summary(n):
         print(f"{label}: {fmt_money(s[key])}")
     print(f"Posições: {s['open_count']} abertas / {s['closed_count']} fechadas; sem cotação: {s['unpriced']}")
     print(f"Limites: risco {s['max_risk']*100}% | perda diária {s['max_daily_loss']*100}% | exposição {s['max_exposure']*100}%")
-    print(f"Bloqueio diário: {'ATIVO' if s['halted'] else 'não'}")
+    print(f"Bloqueio Paper: {'ATIVO' if s['halted'] else 'não'} | kill switch: {'ATIVO' if s['manual_halt'] else 'inativo'}")
     print("Estimativas usam últimas cotações manuais, que podem estar antigas; não são equity de corretora.")
 
 def show_detail(n):
@@ -385,9 +411,10 @@ def show_system_status(n):
 def show_help():
     print("\nNEXUS Market Intelligence — ajuda")
     print("0 sair | 1 cotação manual | 2 abrir simulada | 3 abertas | 4 histórico | 5 fechar simulada")
-    print("6 resumo | 7 detalhes | 8 limites | 9 exportar CSV/TXT | b backup | r restaurar | a estado | h ajuda")
+    print("6 resumo | 7 detalhes | 8 limites | 9 exportar CSV/TXT | b backup | r restaurar | a estado | k kill switch | h ajuda")
     print("Só Paper Trading. Sem API de mercado, corretora, preço ao vivo ou monitorização em background.")
     print("Restauro substitui o estado atual, após criar automaticamente uma cópia de segurança.")
+    print("k ativa/desativa kill switch Paper persistente; não envia nem fecha ordens reais.")
 
 def run_menu(n):
     selected=None
@@ -432,6 +459,18 @@ def run_menu(n):
                     if input("Restauro substitui o estado atual. Escreve RESTORE para confirmar: ").strip()!="RESTORE": print("Restauro cancelado.")
                     else: print("Restaurado; cópia do estado anterior:",n.restore_database(backups[selected-1]))
             elif choice=="a": show_system_status(n)
+            elif choice=="k":
+                active=n.manual_halt()
+                if active:
+                    if input("Kill switch ativo. Escreve RESUME para permitir novas posições Paper: ").strip() == "RESUME":
+                        n.set_kill_switch(False, "explicit-resume")
+                        print("Kill switch desativado; Paper continua sem broker.")
+                    else: print("Kill switch mantido ativo.")
+                else:
+                    if input("Escreve HALT para bloquear novas posições Paper: ").strip() == "HALT":
+                        n.set_kill_switch(True, "manual-menu")
+                        print("Kill switch persistente ATIVO; posições existentes continuam geríveis.")
+                    else: print("Ativação cancelada.")
             elif choice=="h": show_help()
             else: print("Opção inválida.")
         except (ValueError, sqlite3.Error, OSError) as exc: print(f"\033[31mNão executado: {exc}\033[0m")
