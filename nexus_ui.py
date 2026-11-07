@@ -81,6 +81,7 @@ def render_dashboard(n,status,stream=None,width=None):
     unreal="sem cotação" if s["unpriced"] else fmt_money(s["unrealized"])+" est."
     _row(f"NÃO REALIZADO: {unreal} | ABERTAS: {s['open_count']}",width,stream)
     _row(f"EXPOSIÇÃO: {fmt_money(s['exposure'])} / teto {fmt_money(s['exposure_cap'])}",width,stream)
+    _row("KILL SWITCH PAPER: " + ("ATIVO" if s.get("manual_halt", False) else "inativo"),width,stream,GOLD if s.get("manual_halt", False) else WHITE)
     _section("AGENTES IA | DESATIVADOS — não integrados",width,stream)
     _row("Fornecedor/modelo: não configurados no painel",width,stream)
     # Compact agent status, no fake RUNNING/COMPLETED states.
@@ -92,7 +93,8 @@ def render_menu(stream=None,width=None,selected=None):
     items=("[1] Cotação manual","[2] Nova posição PAPER","[3] Posições abertas","[4] Histórico",
            "[5] Fechar posição PAPER","[6] Resumo da conta","[7] Detalhes da posição",
            "[8] Limites de risco","[9] Exportar CSV/TXT","[b] Backup SQLite",
-           "[r] Restaurar backup","[a] Diagnóstico local","[h] Ajuda","[0] Sair")
+           "[r] Restaurar backup","[a] Diagnóstico local","[k] Kill switch Paper",
+           "[h] Ajuda","[0] Sair")
     inside=width-4
     if inside>=52:
         for i in range(0,len(items),2):
