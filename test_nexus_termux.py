@@ -161,4 +161,26 @@ class TermuxPaperTests(unittest.TestCase):
     def test_manual_quote_validation(self):
         with self.assertRaises(ValueError): self.n.update_quote('EUR/USD','1.1','1.09')
 
+    def test_corrupt_stored_quote_fails_closed_before_open(self):
+        self.n.db.execute("UPDATE quotes SET ask='NaN' WHERE symbol='EUR/USD'")
+        self.n.db.commit()
+        with self.assertRaisesRegex(ValueError, "cotação guardada inválida"):
+            self.n.open_position('EUR/USD','BUY','1.09','1.12')
+        self.assertEqual(self.n.positions('OPEN'), [])
+
+    def test_stored_quote_with_invalid_timestamp_fails_closed(self):
+        self.n.db.execute("UPDATE quotes SET updated_at='SECRET-NOT-A-TIMESTAMP' WHERE symbol='EUR/USD'")
+        self.n.db.commit()
+        with self.assertRaisesRegex(ValueError, "cotação guardada inválida") as ctx:
+            self.n.open_position('EUR/USD','BUY','1.09','1.12')
+        self.assertNotIn('SECRET', str(ctx.exception))
+        self.assertEqual(self.n.positions('OPEN'), [])
+
+    def test_stored_quote_wrong_source_fails_closed(self):
+        self.n.db.execute("UPDATE quotes SET source=' ' WHERE symbol='EUR/USD'")
+        self.n.db.commit()
+        with self.assertRaisesRegex(ValueError, "cotação guardada inválida"):
+            self.n.open_position('EUR/USD','BUY','1.09','1.12')
+        self.assertEqual(self.n.positions('OPEN'), [])
+
 if __name__=='__main__': unittest.main()

@@ -39,3 +39,8 @@ A moldura exibe JD/♓/peixes e slogan. Em terminais com largura suficiente, men
 ## Kill switch persistente Paper
 
 A opção `k` bloqueia novas posições simuladas usando o registo `paper_halted` na tabela `settings` já existente; não altera o esquema da base e sobrevive a reinícios do processo. Ativar exige escrever `HALT`; desativar exige escrever `RESUME`. Estado desconhecido/corrompido falha fechado e impede novas posições. O bloqueio é apenas do painel Paper, não fecha automaticamente posições existentes, que continuam a poder ser geridas/fechadas manualmente. O limite diário de perdas mantém-se independente e também bloqueia novas entradas. Não há ligação de corretora, execução real, monitorização de fundo ou promessa de proteção contra perdas.
+
+
+## Validação de cotações guardadas
+
+Antes de abrir/fechar uma posição, o painel valida novamente o registo SQLite: instrumento permitido, bid/ask positivos, finitos e coerentes, timestamp com fuso horário e origem não vazia. Dados corrompidos bloqueiam a operação e não são repetidos no erro. Quando a operação exige frescura, timestamp futuro ou idade acima de 30 minutos também bloqueiam. Isto valida a integridade do registo; **não prova que uma cotação manual seja real ou atual de mercado**.
