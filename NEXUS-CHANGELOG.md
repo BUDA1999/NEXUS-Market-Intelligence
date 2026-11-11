@@ -2,6 +2,13 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-11 — validar cotações SQLite antes de novas entradas
+
+- `Nexus.quote()` passa a validar novamente, na leitura, símbolo, bid/ask finitos e coerentes, timestamp com fuso e fonte não vazia, usando as primitivas existentes de `nexus_safety.py`. Cotações danificadas no banco bloqueiam a abertura com erro seguro, sem expor os valores armazenados.
+- Frescura opcional (>30 min) continua apenas nas operações de abertura/fecho; a inspeção/visualização continua disponível e o código não afirma que cotação manual recente seja cotação de mercado ao vivo.
+- Adicionados três testes: bid/cotação corrupta, timestamp inválido sem eco de conteúdo e origem vazia. Sem alterações ao esquema, cotações guardadas ou a lógica da posição.
+- Testes em Linux: 32 testes dos módulos de Paper e segurança passaram; `py_compile` e `--check` passaram. Não validado no Android/Termux.
+
 ## 2026-11-07 — kill switch persistente de novas posições Paper
 
 - Adicionado controlo explícito de ativação `HALT` e retoma `RESUME` via opção `k`, guardado em `settings.paper_halted` sem migração nem perda dos dados SQLite existentes.

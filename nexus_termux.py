@@ -12,6 +12,8 @@ from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
+from nexus_safety import Quote, SafetyError
+
 SYMBOLS = {"EUR/USD", "XAU/USD"}
 D = Decimal
 UTC = timezone.utc
@@ -123,14 +125,31 @@ class Nexus:
         return closed
 
     def quote(self, symbol, require_fresh=False):
+        if symbol not in SYMBOLS:
+            raise ValueError("símbolo de cotação não permitido")
         row = self.db.execute("SELECT * FROM quotes WHERE symbol=?", (symbol,)).fetchone()
         if not row:
             raise ValueError(f"sem cotação simulada para {symbol}; introduz bid/ask primeiro")
         q = dict(row)
-        if require_fresh:
-            age = (datetime.now(UTC) - datetime.fromisoformat(q['updated_at'])).total_seconds()
-            if age < -5 or age > MAX_QUOTES_AGE_SECONDS:
-                raise ValueError("cotação manual antiga ou com horário futuro; atualiza bid/ask antes da ordem")
+        try:
+            validated = Quote.build(
+                symbol=symbol,
+                bid=q["bid"],
+                ask=q["ask"],
+                timestamp=datetime.fromisoformat(q["updated_at"]),
+                source=q["source"],
+            )
+            if require_fresh:
+                validated.assert_fresh(MAX_QUOTES_AGE_SECONDS)
+        except SafetyError as exc:
+            message = str(exc)
+            if "stale quote" in message:
+                raise ValueError("cotação manual antiga (>30 min); atualiza bid/ask antes da ordem") from None
+            if "future" in message:
+                raise ValueError("horário da cotação está no futuro; atualiza bid/ask") from None
+            raise ValueError("cotação guardada inválida; atualiza bid/ask antes da ordem") from None
+        except (KeyError, TypeError, ValueError):
+            raise ValueError("cotação guardada inválida; atualiza bid/ask antes da ordem") from None
         return q
 
     def manual_halt(self):
