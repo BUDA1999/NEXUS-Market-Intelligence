@@ -88,3 +88,11 @@ Alterações à personalização NEXUS; o changelog original do TradingAgents pe
 - `NEXUS-API.md` documenta configuração temporária, limitações e ausência de integração ao painel.
 - Testes locais: 14 casos para segurança e API com rede simulada; 13 testes NEXUS pré-existentes também passaram.
 - Limitações: controlos de segurança ainda não estão ligados ao painel. Cálculo genérico, não Forex/lote real. APIs não testadas com chaves reais. Android/Termux não validado. Sem corretora, sem ordens reais.
+
+## 2026-11-12 — consulta externa de taxas somente leitura
+
+- Adicionado `nexus_market_data.py` para buscar taxa e timestamp de EUR/USD e XAU/USD na API Twelve Data, com whitelist fixa, HTTPS, timeouts, validação de símbolo/Decimal/timestamp, limites de resposta e erros que não expõem segredo nem corpo remoto.
+- Adicionada opção `m` ao painel para consulta pontual e somente leitura. Não grava na base, não substitui cotação manual nem aciona posição/stop; dados com mais de cinco minutos aparecem antigos e timestamp futuro é rejeitado.
+- A API verificada fornece `rate`/`timestamp`, não bid/ask, portanto a integração não alimenta ordens simuladas. Nenhuma automatização, execução real ou feed em background.
+- Documentados uso temporário da chave na sessão e restrições do plano Basic do fornecedor.
+- Testes unitários de dados mockados: sete casos passaram em Linux; Termux não validado.

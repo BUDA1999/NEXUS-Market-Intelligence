@@ -44,3 +44,18 @@ A opção `k` bloqueia novas posições simuladas usando o registo `paper_halted
 ## Validação de cotações guardadas
 
 Antes de abrir/fechar uma posição, o painel valida novamente o registo SQLite: instrumento permitido, bid/ask positivos, finitos e coerentes, timestamp com fuso horário e origem não vazia. Dados corrompidos bloqueiam a operação e não são repetidos no erro. Quando a operação exige frescura, timestamp futuro ou idade acima de 30 minutos também bloqueiam. Isto valida a integridade do registo; **não prova que uma cotação manual seja real ou atual de mercado**.
+
+## Taxas Twelve Data em modo leitura (`m`)
+
+Com `TWELVE_DATA_API_KEY` definido apenas na sessão, a opção `m` consulta as taxas `EUR/USD` e `XAU/USD` no endpoint de câmbio da Twelve Data e mostra a taxa e o timestamp UTC de origem. Consulta uma vez por símbolo, sem guardar a resposta no SQLite, sem substituir as cotações manuais e sem alterar posições. Se a taxa tiver mais de 5 minutos, é identificada como antiga; timestamps futuros inesperados e respostas inválidas são recusados. O painel atual requer bid e ask reais para abrir/fechar Paper, mas este endpoint só fornece uma taxa única; por isso a leitura não pode preencher o menu de posição nem é uma cotação executável.
+
+Para disponibilizar a chave apenas à sessão atual (não a guardar no Git):
+
+```bash
+read -rsp 'Chave Twelve Data: ' TWELVE_DATA_API_KEY; echo
+export TWELVE_DATA_API_KEY
+bash nexus-start.sh
+unset TWELVE_DATA_API_KEY
+```
+
+O plano Basic da Twelve Data limita utilização a teste/avaliação/desenvolvimento e não permite uso em produção ou exibição a utilizadores; confirmar os termos atuais no fornecedor antes de distribuir o painel. A consulta é manual, não corre em segundo plano.\n

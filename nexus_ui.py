@@ -94,7 +94,7 @@ def render_menu(stream=None,width=None,selected=None):
            "[5] Fechar posição PAPER","[6] Resumo da conta","[7] Detalhes da posição",
            "[8] Limites de risco","[9] Exportar CSV/TXT","[b] Backup SQLite",
            "[r] Restaurar backup","[a] Diagnóstico local","[k] Kill switch Paper",
-           "[h] Ajuda","[0] Sair")
+           "[m] Consultar taxa leitura","[h] Ajuda","[0] Sair")
     inside=width-4
     if inside>=52:
         for i in range(0,len(items),2):
@@ -106,7 +106,8 @@ def render_menu(stream=None,width=None,selected=None):
         for item in items:
             chosen=bool(selected and item.startswith(f"[{selected}]"))
             _row(("> " if chosen else "")+item,width,stream,CYAN+BOLD if chosen else WHITE)
-    _row("ENTER: continuar | PAPER | sem broker/feed",width,stream,GRAY)
+    _row("m: taxa externa só leitura | sem broker",width,stream,GRAY)
+    _row("ENTER: continuar | PAPER",width,stream,GRAY)
     _bottom(width,stream)
 
 def fmt_money(value): return f"${Decimal(value):,.2f}"

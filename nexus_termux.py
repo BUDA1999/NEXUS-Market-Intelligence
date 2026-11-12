@@ -427,10 +427,22 @@ def show_system_status(n):
     from nexus_status import inspect_status, format_status
     print(format_status(inspect_status(n.path)))
 
+def show_market_rates():
+    from datetime import datetime, timezone
+    from nexus_market_data import fetch_supported, IndicativeRate
+    print("\n=== TAXAS INDICATIVAS | SÓ LEITURA ===")
+    print("Fonte Twelve Data; não altera cotações/posições Paper e não envia ordens.")
+    for result in fetch_supported():
+        if isinstance(result, IndicativeRate):
+            when=datetime.fromtimestamp(result.timestamp,timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+            print(f"{result.symbol}: {result.rate} | {result.status} | origem: {when} | idade: {result.age_seconds}s")
+        else:
+            print(f"{result[0]}: indisponível ({result[1]})")
+
 def show_help():
     print("\nNEXUS Market Intelligence — ajuda")
     print("0 sair | 1 cotação manual | 2 abrir simulada | 3 abertas | 4 histórico | 5 fechar simulada")
-    print("6 resumo | 7 detalhes | 8 limites | 9 exportar CSV/TXT | b backup | r restaurar | a estado | k kill switch | h ajuda")
+    print("6 resumo | 7 detalhes | 8 limites | 9 exportar CSV/TXT | b backup | r restaurar | a estado | k kill switch | m taxa leitura | h ajuda")
     print("Só Paper Trading. Sem API de mercado, corretora, preço ao vivo ou monitorização em background.")
     print("Restauro substitui o estado atual, após criar automaticamente uma cópia de segurança.")
     print("k ativa/desativa kill switch Paper persistente; não envia nem fecha ordens reais.")
@@ -478,6 +490,7 @@ def run_menu(n):
                     if input("Restauro substitui o estado atual. Escreve RESTORE para confirmar: ").strip()!="RESTORE": print("Restauro cancelado.")
                     else: print("Restaurado; cópia do estado anterior:",n.restore_database(backups[selected-1]))
             elif choice=="a": show_system_status(n)
+            elif choice=="m": show_market_rates()
             elif choice=="k":
                 active=n.manual_halt()
                 if active:
