@@ -31,3 +31,11 @@ O comando `bash nexus-start.sh` no Termux só arranca o painel Paper. Não arran
 - Não instruir o utilizador a colar chaves no chat.
 - Não ativar trading real, conta live ou ordens automáticas. A vontade de ir além do Paper significa investigar/preparar a transição, não autorização para executar operações.
 - O teste de um modelo gratuito comprovou apenas uma resposta simples; não comprova qualidade, disponibilidade contínua, custo futuro zero ou adequação para análise financeira.
+
+
+## Atualização — arranque persistente OpenRouter
+
+- Adicionados scripts de configuração de primeira utilização e launcher do motor no Debian/proot.
+- Após o utilizador executar uma vez `bash scripts/setup-openrouter.sh` e inserir a chave no prompt oculto, a chave fica em `~/.config/nexus/openrouter.env` fora do clone, diretório 700 e ficheiro 600; `.bashrc` carrega apenas modelo/provider nas novas sessões; o segredo só é carregado pelo launcher.
+- `bash scripts/nexus-engine-start.sh` arranca o CLI TradingAgents com configuração persistente. Pode consumir créditos conforme modelo. Não liga o painel Paper ao grafo e não executa trading por conta própria.
+- Scripts passaram `bash -n` e teste isolado em Linux com chave sintética; ainda não executados no Debian do telefone. O utilizador precisará atualizar o clone Debian para receber os scripts e configurar uma vez.

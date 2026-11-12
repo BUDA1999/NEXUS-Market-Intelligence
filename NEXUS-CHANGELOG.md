@@ -2,6 +2,13 @@
 
 Alterações à personalização NEXUS; o changelog original do TradingAgents permanece separado.
 
+## 2026-11-12 — configuração persistente OpenRouter no Debian/proot
+
+- Adicionados `scripts/setup-openrouter.sh` e `scripts/nexus-engine-start.sh`. Configuração única guarda chave fora do repositório em `~/.config/nexus/openrouter.env` com diretório 700/ficheiro 600; instalação lê chave sem eco e faz cópia local da configuração anterior.
+- Fornecedor/modelo gratuito ERNIE e idioma Português são carregados em novas sessões Debian via bloco idempotente no `~/.bashrc`; a chave só é carregada pelo launcher ao iniciar o CLI.
+- Instalador não faz inferência nem operação de trading. O motor original ainda está separado do painel Paper; o uso do launcher pode consumir créditos conforme modelo/limite. Sem alteração de estado no painel ou envio de ordens.
+- Teste local isolado com chave sintética: setup passou, permissões 700/600 e ausência de segredo no `.bashrc` confirmadas; `bash -n` passou. Não validado no Debian/Termux do utilizador.
+
 ## 2026-11-11 — validar cotações SQLite antes de novas entradas
 
 - `Nexus.quote()` passa a validar novamente, na leitura, símbolo, bid/ask finitos e coerentes, timestamp com fuso e fonte não vazia, usando as primitivas existentes de `nexus_safety.py`. Cotações danificadas no banco bloqueiam a abertura com erro seguro, sem expor os valores armazenados.

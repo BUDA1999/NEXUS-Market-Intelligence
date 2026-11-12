@@ -127,6 +127,29 @@ tradingagents --help
 
 O uso de tickers Yahoo como `EURUSD=X` **não comprova** cotação Forex executável ou em tempo real. Não uses o motor para abrir operações; Forex, execução automática e integração NEXUS ainda não estão validados.
 
+
+### OpenRouter: configuração persistente no Debian/proot
+
+Depois de instalar o motor no Debian e atualizar/clonar a versão que contém os scripts:
+
+```bash
+cd ~/NEXUS-Market-Intelligence
+bash scripts/setup-openrouter.sh
+```
+
+O instalador pede a chave com entrada oculta e guarda-a fora do clone em `~/.config/nexus/openrouter.env` (permissão 600; diretório 700). Guarda fornecedor, modelos gratuitos escolhidos e idioma num `models.env` separado; apenas essas configurações sem segredo são carregadas em novas sessões do Debian via `.bashrc`. A chave **não** é carregada em cada shell nem impressa: o launcher abaixo lê o segredo apenas ao iniciar o motor. O instalador não faz chamada de modelo nem análise.
+
+Para arrancar o motor com a configuração guardada:
+
+```bash
+cd ~/NEXUS-Market-Intelligence
+bash scripts/nexus-engine-start.sh
+```
+
+O launcher inicia o CLI interativo TradingAgents; usar o motor pode consumir créditos conforme o fornecedor/modelo e os limites da chave. Isto não liga o grafo ao painel `nexus_termux.py`, não fornece cotação Forex validada e não envia ordens. O painel Paper inicia à parte no Termux com `bash nexus-start.sh`.
+
+Para apagar a configuração persistente, remove `~/.config/nexus/openrouter.env` e `~/.config/nexus/models.env`, e retira o bloco `NEXUS_MODELS_ENV_START` ... `NEXUS_MODELS_ENV_END` de `~/.bashrc`. Para revogar a chave, usa a página de gestão do OpenRouter. Nunca copies os ficheiros privados para o repositório nem partilhes o seu conteúdo.
+
 ## O que enviar se falhar
 
 Envia o texto do erro e a saída de `python --version`, `uname -m`, `df -h "$HOME"` e o ponto em que falhou. Remove chaves, tokens, e-mail privado ou outros dados pessoais antes de partilhar. Distingue erro do painel NEXUS de erro de dependências do motor original.
